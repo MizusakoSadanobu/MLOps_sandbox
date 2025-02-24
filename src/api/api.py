@@ -21,18 +21,18 @@ model_uri = f'models:/{config_ini["dagshub"]["experiment_name"]}/{version}'
 # load model
 model = mlflow.sklearn.load_model(model_uri)
 
-# FastAPI アプリケーションの作成
+# FastAPI app
 app = FastAPI()
 
-# 入力データのバリデーション
+# Data Validation
 class InputData(BaseModel):
     features: list[float]
 
 @app.post("/predict/")
 def predict(data: InputData):
     X_input = np.array(data.features).reshape(1, -1)
-    if X_input.shape[1] != 2:
-        raise HTTPException(status_code=400, detail="Input must have exactly 2 features")
+    if X_input.shape[1] != 4:
+        raise HTTPException(status_code=400, detail="Input must have exactly 4 features")
     
     prediction = model.predict(X_input)
     return {"prediction": int(prediction[0])}
