@@ -9,3 +9,13 @@ dependencies = [
     "mlflow>=2.20.2",
     "scikit-learn>=1.6.1",
 ]
+
+[tool.flake8]
+max-line-length = 120
+max-complexity = 18
+
+[tool.mypy]
+python_version = "3.9"
+no_strict_optional = true
+ignore_missing_imports = true
+check_untyped_defs = true
