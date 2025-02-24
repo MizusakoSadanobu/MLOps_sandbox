@@ -8,3 +8,6 @@ A sandbox for MLOps env:
 - **GitHub Actions**: used for testing code and model.
 
 ![architecture](./doc/image/architecture.jpg)
+
+# Reference
+- [DAGsHub-Official/dagshub-docs | DagsHub | MLflow Tracking](https://dagshub.com/DagsHub-Official/dagshub-docs/src/main/docs/integration_guide/mlflow_tracking.md)
