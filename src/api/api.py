@@ -1,23 +1,25 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import numpy as np
-import joblib
-from sklearn.linear_model import LogisticRegression
+import configparser
+import dagshub
+import mlflow
 
-# モデルのトレーニングと保存
-def train_and_save_model():
-    X = np.array([[0, 0], [1, 1], [2, 2], [3, 3]])
-    y = np.array([0, 1, 1, 1])
-    model = LogisticRegression()
-    model.fit(X, y)
-    joblib.dump(model, "model.pkl")
+# config
+config_ini = configparser.ConfigParser()
+config_ini.read('config.ini', encoding='utf-8')
 
-# モデルの読み込み
-try:
-    model = joblib.load("model.pkl")
-except FileNotFoundError:
-    train_and_save_model()
-    model = joblib.load("model.pkl")
+# initialize dagshub
+dagshub.auth.add_app_token(config_ini["dagshub"]["token"], host=None)
+dagshub.init(repo_owner=config_ini["dagshub"]["user_name"], repo_name=config_ini["dagshub"]["project_name"], mlflow=True)
+
+# initialize mlflow
+client = mlflow.MlflowClient()
+version = client.get_latest_versions(name=config_ini["dagshub"]["experiment_name"])[0].version
+model_uri = f'models:/{config_ini["dagshub"]["experiment_name"]}/{version}'
+
+# load model
+model = mlflow.sklearn.load_model(model_uri)
 
 # FastAPI アプリケーションの作成
 app = FastAPI()
